@@ -65,6 +65,7 @@ end
 def create_all_options(files)
   files.each do |f|
     option = get_option_params_from_file(f)
+    puts "Creating #{f}"
     create_option(option)
   end
 end
@@ -82,6 +83,10 @@ def create_option_value(option_id, price, timestamp)
   end  
 end
 
+def is_a_number?(s)
+  s.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true 
+end
+
 def load_file(filename)
   name = File.basename(filename).gsub('.csv', '')
   o = @option_hash[name]
@@ -92,8 +97,10 @@ def load_file(filename)
   CSV.read(filename).reject {|x| x.first.nil? }.each_with_index do |row, i|
     next if i < 5 # skip headers
     break if row[0].strip.empty?
+    break if !is_a_number(row[1])
     date = row[0].to_s.strip
     price = row[1].to_s.strip
+    puts "Load from file #{name}"
     create_option_value(o.id, price, date)
   end
 end
@@ -119,3 +126,5 @@ else
   @option_hash = get_all_options
   load_file(ARGV[0])
 end
+
+puts "All Done"
