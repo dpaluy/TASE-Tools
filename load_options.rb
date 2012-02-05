@@ -97,7 +97,6 @@ def load_file(filename)
   CSV.read(filename).reject {|x| x.first.nil? }.each_with_index do |row, i|
     next if i < 5 # skip headers
     break if row[0].strip.empty?
-    break if !is_a_number(row[1])
     date = row[0].to_s.strip
     price = row[1].to_s.strip
     puts "Load from file #{name}"
